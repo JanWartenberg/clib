@@ -3,8 +3,9 @@
 
 List *List_create()
 {
-//    return calloc(1, sizeof(List));
     List *list = calloc(1, sizeof(List));
+    // include a default of 0
+    // Zed didn't have this, probably he was lucky with his compiler
     list->count = 0;
     return list;
 }
@@ -125,6 +126,8 @@ error:
 }
 
 void List_print(List * list) {
+    // introduced this for debugging
+    // TBH it relies on value being string
     ListNode *node = list->first;
 
     printf("Count: %d\n", List_count(list));
