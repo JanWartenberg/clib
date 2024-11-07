@@ -132,10 +132,6 @@ void List_print(List * list) {
         printf("List is empty\n");
     }
 
-    //while (node != NULL) {
-    //    printf("Value: %s\n", (char *)node->value);
-    //    node = node->next;
-    //}
     LIST_FOREACH(list, first, next, cur) {
         printf("Value: %s\n", (char *)cur->value);
     }
