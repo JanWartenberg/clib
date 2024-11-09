@@ -1,10 +1,12 @@
-# make -f Makefile2 clean
-# make -f Makefile2 all
+# make clean
+# make all
 #
 # custom variant since the test building of Zed's example did not work
 # and made me angry
 
-CFLAGS=-g -Wall -Wextra -Isrc
+CC=clang
+CFLAGS=-g -Wall -Wextra
+LDFLAGS=-lm
 
 SOURCES=$(wildcard src/**/*.c src/*.c)
 OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
@@ -17,17 +19,28 @@ all: clean main tests execute_tests
 build: main tests
 
 main: $(OBJECTS)
-	@echo "===\nBuilding default target\n==="
+	@echo "===\nBuilding default target rule\n==="
 	@echo $(SOURCES)
 	@echo $(OBJECTS)
-	clang $(CFLAGS) -c $(SOURCES) -o $(OBJECTS)
 
-tests: $(TEST_OBJ)
+
+# rule to build .o from .c files
+# if like "main:" something depends on $(OBJECTS), 
+# then make applies this implicit rule automatically
+%.o: %.c
+	@echo "c to the o (" $< ")\n"
+	$(CC) $(CFLAGS) -c $< -o $@
+
+tests: $(TEST_OBJ) $(TESTS)
 	@echo "===\nBuilding tests\n==="
-	@echo $(TEST_SRC)
-	@echo $(TESTS)
-	clang $(CFLAGS) -c $(TEST_SRC) -o $(TEST_OBJ)
-	clang $(CFLAGS) $(OBJECTS) $(TEST_OBJ) -o $(TESTS)
+
+# test executable rule
+#  (last custom rule only worked for one test executable file)
+# % matches test name
+# implicitly called by tests: rule, since it depends on the TESTS
+%: %.o $(OBJECTS)
+	@echo "test executable rule: $@"
+	$(CC) $(LDFLAGS) -o $@ $^
 
 execute_tests:
 	@echo "===\nRun tests\n==="
