@@ -38,6 +38,13 @@ void *List_remove(List *list, ListNode *node);
                                                    ListNode *V = NULL;\
 for(V = _node = L->S; _node != NULL; V = _node = _node->M)
 
+void List_swap(List *list, ListNode *node1, ListNode *node2);
+void List_swap_values(ListNode *node1, ListNode *node2);
+
+// for debugging
 void List_print(List *list);
+void List_print_int(List * list);
+// for swap testing
+void* List_get_value(List *list, int n);
 
 #endif
