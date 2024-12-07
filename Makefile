@@ -4,6 +4,9 @@
 # custom variant since the test building of Zed's example did not work
 # and made me angry
 
+# and since it did not work out, rather use linux for all of it:
+# docker run -it --volume D:\Docs\Code\try-c-hardway\:/tmp/app llvm-neovim:latest
+
 CC=clang
 CFLAGS=-g -Wall -Wextra
 LDFLAGS=-lm
