@@ -23,6 +23,7 @@ List *create_words()
 
 int is_sorted(List * words)
 {
+    check(words!= NULL, "List to be checked to be sorted must exist!");
     LIST_FOREACH(words, first, next, cur) {
         if (cur->next && strcmp(cur->value, cur->next->value) > 0) {
             debug("%s %s", (char *)cur->value,
@@ -32,6 +33,8 @@ int is_sorted(List * words)
     }
 
     return 1;
+error:
+    return 0;
 }
 
 char *test_bubble_sort()
@@ -79,8 +82,8 @@ char *test_merge_sort()
             "Should still be sorted after merge sort.");
 
 
-    List_destroy(res2);
-    List_destroy(res);
+    if(res2 != NULL) List_destroy(res2);
+    if(res != NULL) List_destroy(res);
     List_destroy(words);
 
     return NULL;

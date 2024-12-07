@@ -60,9 +60,9 @@ List* List_merge_sort(List * list, List_compare cmp) {
    // merge back
    result = List_merge(left_sorted, right_sorted, cmp);
 
-   if (left_sorted != left)
+   if (left_sorted != left && left != NULL)
        List_destroy(left);
-   if (right_sorted != right)
+   if (right_sorted != right && right != NULL)
        List_destroy(right);
    if(left_sorted != NULL)
        List_destroy(left_sorted);
@@ -76,6 +76,8 @@ error:
 
 
 List* List_merge(List* left, List* right, List_compare cmp) {
+    check(left != NULL, "Partial List (left) to be sorted must exist");
+    check(right != NULL, "Partial List (right) to be sorted must exist");
     List* result = List_create();
 
     int count_sum = left->count + right->count;
@@ -109,7 +111,8 @@ List* List_merge(List* left, List* right, List_compare cmp) {
         }
     }
 
+    return result;
 // fallthrough
 error:
-    return result;
+    return NULL;
 }
