@@ -41,6 +41,7 @@ void List_push(List * list, void *value)
     check_mem(node);
 
     node->value = value;
+    node->next = NULL;
 
     if (list->last == NULL) {
         list->first = node;
