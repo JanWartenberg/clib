@@ -15,5 +15,6 @@ Make sure Docker Desktop daemon runs.
 docker run -it --volume D:\Docs\Code\try-c-hardway\:/tmp/app llvm-neovim:latest
 
 # cd /tmp/app/clib
+# make
 
 ```
