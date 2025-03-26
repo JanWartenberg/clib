@@ -32,6 +32,7 @@ void DArray_clear(DArray *array) {
       }
     }
   }
+  array->end = 0;
 }
 
 // static: can only be called within this file
