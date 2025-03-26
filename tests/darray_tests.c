@@ -4,14 +4,15 @@
 static DArray *array = NULL;
 static int *val1 = NULL;
 static int *val2 = NULL;
+#define INITIAL_MAX 100
 
 char *test_create() {
-  array = DArray_create(sizeof(int), 100);
+  array = DArray_create(sizeof(int), INITIAL_MAX);
   mu_assert(array != NULL, "DArray_create failed");
   mu_assert(array->contents != NULL, "contents are wrong in DArray");
   mu_assert(array->end == 0, "end isn't at the right spot");
   mu_assert(array->element_size == sizeof(int), "element size is wrong");
-  mu_assert(array->max == 100, "wrong max length on initial size");
+  mu_assert(array->max == INITIAL_MAX, "wrong max length on initial size");
 
   return NULL;
 }
@@ -63,7 +64,10 @@ char *test_remove() {
 
 char *test_expand_contract() {
   int old_max = array->max;
+  mu_assert((unsigned int)array->max == INITIAL_MAX,
+            "Wrong start size before expand.");
   DArray_expand(array);
+
   mu_assert((unsigned int)array->max == old_max + array->expand_rate,
             "Wrong size after expand.");
 
@@ -98,6 +102,31 @@ char *test_push_pop() {
   return NULL;
 }
 
+char *test_clear() {
+#define INITIAL_MAX2 25
+  DArray *array2 = DArray_create(sizeof(float), 25);
+  mu_assert(array2->max == INITIAL_MAX2, "Max not as expected.");
+
+  int i = 0;
+  for (i = 0; i < INITIAL_MAX2 + DEFAULT_EXPAND_RATE - 1; i++) {
+    float *val = DArray_new(array2);
+    *val = i * 333.0;
+    DArray_push(array2, val);
+  }
+
+  mu_assert(array2->end == INITIAL_MAX2 + DEFAULT_EXPAND_RATE - 1,
+            "End not as expected.");
+  mu_assert(array2->max == INITIAL_MAX2 + DEFAULT_EXPAND_RATE,
+            "Max not as expected.");
+
+  DArray_clear(array2);
+
+  mu_assert(array2->end == 0, "End not as expected.");
+  mu_assert(array2->max == INITIAL_MAX2 + DEFAULT_EXPAND_RATE,
+            "Max not as expected.");
+  return NULL;
+}
+
 char *all_tests() {
   mu_suite_start();
 
@@ -108,6 +137,7 @@ char *all_tests() {
   mu_run_test(test_remove);
   mu_run_test(test_expand_contract);
   mu_run_test(test_push_pop);
+  mu_run_test(test_clear);
   mu_run_test(test_destroy);
 
   return NULL;
