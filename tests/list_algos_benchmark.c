@@ -3,21 +3,23 @@
  * TBC: is there an easy way to make this list treatment generic?
  *  for now I push ints, during deep_copy I cast to int,
  *  List_print needs the int..
+ *  -> short answer: it is possible via void pointers
+ *  -> long answer: it depends when this is feasible or not
  * */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
 #include "../src/lcthw/list.h"
-#include "../src/lcthw/wait.h"
+#include "../src/lcthw/list_algos.h"
 
-#define TEST_REPETITIONS 50
-#define LIST_ELEMENTS 500
+#define TEST_REPETITIONS 100
+#define LIST_ELEMENTS 1000
 #define NORM_RAND_MAX 100
 
 typedef List *(algo_func)(List *list);
 
-/* 
+/*
  * execute a list function and return the duration in seconds
  *
  * TBC time.h  vs. sys/time
@@ -36,7 +38,7 @@ double execute_measure(algo_func func, List *list) {
   func(list);
   end = clock();
 
-  return (double)(end-start)/CLOCKS_PER_SEC;
+  return (double)(end - start) / CLOCKS_PER_SEC;
 }
 
 List *List_deep_copy(List *list) {
@@ -51,22 +53,21 @@ List *List_deep_copy(List *list) {
   return newlist;
 }
 
-// dummy functions
+// wrapper function for the function under test
 List *algo1(List *list) {
-  List_print_int(list);
+  int rc = List_bubble_sort(list, (List_compare)compare_int);
   return list;
 }
 
+// wrapper function for the function under test
 List *algo2(List *list) {
-  List_print_int(list);
-  wait_ms(1);
-  return list;
+  List *newlist = List_merge_sort(list, (List_compare)compare_int);
+  return newlist;
 }
 
 int main(int argc, char *argv[]) {
   printf("list_algos_benchmark started\n");
-  //printf("CLOCKS_PER_SEC: %d\n", CLOCKS_PER_SEC);
-
+  // printf("CLOCKS_PER_SEC: %d\n", CLOCKS_PER_SEC);
 
   // create and populate a list
   List *origlist = List_create();
@@ -77,20 +78,28 @@ int main(int argc, char *argv[]) {
     List_push(origlist, (int *)val);
   }
   // for debug
-  List_print_int(origlist);
+  // List_print_int(origlist);
 
   double duration1 = 0.0;
   double duration2 = 0.0;
   for (i = 0; i < TEST_REPETITIONS; i++) {
-    // copy the list
     List *list1 = List_deep_copy(origlist);
     // call the algorithm under test
     duration1 += execute_measure(algo1, list1);
+    List_clear_destroy(list1);
 
-    // copy the list
     List *list2 = List_deep_copy(origlist);
     // call the algorithm under test2
     duration2 += execute_measure(algo2, list2);
+
+    // for crosschecking: sorting works 
+    /*
+    if (i == TEST_REPETITIONS - 1) {
+      List *ret = algo2(list2);
+      List_print_int(ret);
+    }*/
+
+    List_clear_destroy(list2);
   }
 
   printf("Duration algo 1: %f\n", duration1);

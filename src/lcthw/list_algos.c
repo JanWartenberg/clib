@@ -3,6 +3,13 @@
 #include "list.h"
 #include <stdio.h>
 
+int compare_int(const void* a, const void *b)
+{
+  const int *ia = (int*) a;
+  const int *ib = (int*) b;
+  return *ia - *ib;
+}
+
 int List_bubble_sort(List * list, List_compare cmp) {
     check(list != NULL, "List to be sorted must exist");
 
