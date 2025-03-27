@@ -53,3 +53,10 @@ clean:
 	@echo "===\nCleaning\n==="
 	rm -rf build $(OBJECTS) $(TESTS) $(TEST_OBJ)
 
+# Add a new target specifically for the benchmark
+benchmark: list_algos_benchmark_tests
+	./tests/list_algos_benchmark
+
+# Compile rule for the benchmark
+list_algos_benchmark_tests: tests/list_algos_benchmark.c src/lcthw/list.c src/lcthw/wait.c src/lcthw/list_algos.c
+	$(CC) $(CFLAGS) -o tests/list_algos_benchmark tests/list_algos_benchmark.c src/lcthw/list.c src/lcthw/wait.c src/lcthw/list_algos.c $(LIBS)
