@@ -42,7 +42,7 @@ error:
 
 static inline void *DArray_get(DArray * array, int i)
 {
-    check(i < array->end, "DArray attempt to get past max");
+    check(i <= array->end, "DArray attempt to get past max");
     return array->contents[i];
 error:
     return NULL;

@@ -40,8 +40,11 @@ char *test_set() {
 }
 
 char *test_get() {
+
   mu_assert(DArray_get(array, 0) == val1, "Wrong first value.");
   mu_assert(DArray_get(array, 1) == val2, "Wrong second value.");
+  int *ret = DArray_get(array, 2);
+  mu_assert(ret == NULL, "Wrong third value (should be NULL).");
 
   return NULL;
 }
@@ -99,6 +102,38 @@ char *test_push_pop() {
     DArray_free(val);
   }
 
+  return NULL;
+}
+
+/*
+ * Note: this catches a bug in Zed's original code (DArray_expand).
+ * For simple lists it did not cause an issue, but when benchmarking
+ * and creating/clearing lists multiple times, a double free occurs.
+ */
+char *test_expanded_area_initialized() {
+  // Create a dynamic array with a small initial size.
+  DArray *test_array = DArray_create(sizeof(int), 10);
+  int old_max = test_array->max;
+
+  // fill some of the array to simulate normal usage.
+  int i;
+  for (i = 0; i < 5; i++) {
+    int *val = DArray_new(test_array);
+    *val = i;
+    DArray_push(test_array, val);
+  }
+
+  // Expand the array.
+  DArray_expand(test_array);
+  int new_max = test_array->max;
+
+  // Check that the new area is properly initialized to NULL.
+  for (i = old_max; i < new_max; i++) {
+    mu_assert(test_array->contents[i] == NULL,
+              "Expanded area not initialized to NULL.");
+  }
+
+  DArray_clear_destroy(test_array);
   return NULL;
 }
 
