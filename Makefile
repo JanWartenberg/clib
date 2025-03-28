@@ -54,9 +54,13 @@ clean:
 	rm -rf build $(OBJECTS) $(TESTS) $(TEST_OBJ)
 
 # Add a new target specifically for the benchmark
-benchmark: list_algos_benchmark_tests
+benchmark: list_algos_benchmark_tests darray_benchmark_tests
 	./tests/list_algos_benchmark
+	./tests/darray_benchmark
 
 # Compile rule for the benchmark
 list_algos_benchmark_tests: tests/list_algos_benchmark.c src/lcthw/list.c src/lcthw/wait.c src/lcthw/list_algos.c
 	$(CC) $(CFLAGS) -o tests/list_algos_benchmark tests/list_algos_benchmark.c src/lcthw/list.c src/lcthw/wait.c src/lcthw/list_algos.c $(LIBS)
+
+darray_benchmark_tests: tests/darray_benchmark.c src/lcthw/darray.c src/lcthw/rand.c src/lcthw/list.c 
+	$(CC) $(CFLAGS) -o tests/darray_benchmark tests/darray_benchmark.c src/lcthw/darray.c src/lcthw/rand.c src/lcthw/list.c $(LIBS)

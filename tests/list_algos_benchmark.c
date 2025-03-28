@@ -54,13 +54,13 @@ List *List_deep_copy(List *list) {
 }
 
 // wrapper function for the function under test
-List *algo1(List *list) {
+List *random_get1(List *list) {
   int rc = List_bubble_sort(list, (List_compare)compare_int);
   return list;
 }
 
 // wrapper function for the function under test
-List *algo2(List *list) {
+List *random_get2(List *list) {
   List *newlist = List_merge_sort(list, (List_compare)compare_int);
   return newlist;
 }
@@ -85,12 +85,12 @@ int main(int argc, char *argv[]) {
   for (i = 0; i < TEST_REPETITIONS; i++) {
     List *list1 = List_deep_copy(origlist);
     // call the algorithm under test
-    duration1 += execute_measure(algo1, list1);
+    duration1 += execute_measure(random_get1, list1);
     List_clear_destroy(list1);
 
     List *list2 = List_deep_copy(origlist);
     // call the algorithm under test2
-    duration2 += execute_measure(algo2, list2);
+    duration2 += execute_measure(random_get2, list2);
 
     // for crosschecking: sorting works 
     /*
