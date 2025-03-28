@@ -8,7 +8,7 @@
 # docker run -it --volume D:\Docs\Code\try-c-hardway\:/tmp/app llvm-neovim:latest
 
 CC=clang
-CFLAGS=-g -Wall -Wextra
+CFLAGS=-g -Wall -Wextra -O0 -gdwarf-2
 LDFLAGS=-lm
 
 SOURCES=$(wildcard src/**/*.c src/*.c)
