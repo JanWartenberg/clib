@@ -3,6 +3,7 @@
 #include <assert.h>
 
 DArray *DArray_create(size_t element_size, size_t initial_max) {
+
   DArray *array = malloc(sizeof(DArray));
   check_mem(array);
   array->max = initial_max;
@@ -94,6 +95,24 @@ int DArray_push(DArray *array, void *el) {
   } else {
     return 0;
   }
+}
+
+int DArray_insert_begin(DArray *array, void *el) {
+  if (DArray_end(array) >= DArray_max(array)) {
+    if (DArray_expand(array) != 0) {
+      return -1;
+    }
+  }
+
+  // Shift all elements one position to the right.
+  // 'memmove' is safe here as the source and destination overlap.
+  memmove(array->contents + 1, array->contents, array->end * sizeof(void *));
+
+  // Insert the new element at the beginning.
+  array->contents[0] = el;
+  array->end++;
+
+  return 0;
 }
 
 void *DArray_pop(DArray *array) {

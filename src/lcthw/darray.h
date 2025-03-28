@@ -21,6 +21,7 @@ int DArray_contract(DArray * array);
 int DArray_push(DArray * array, void *el);
 void *DArray_pop(DArray * array);
 void DArray_clear_destroy(DArray * array);
+int DArray_insert_begin(DArray *array, void *el);
 
 #define DArray_last(A) ((A)->contents[(A)->end - 1])
 #define DArray_first(A) ((A)->contents[0])

@@ -159,6 +159,37 @@ char *test_clear() {
   mu_assert(array2->end == 0, "End not as expected.");
   mu_assert(array2->max == INITIAL_MAX2 + DEFAULT_EXPAND_RATE,
             "Max not as expected.");
+
+  DArray_destroy(array2);
+  return NULL;
+}
+
+char *test_insert_begin() {
+  DArray *test_array = DArray_create(sizeof(int), 10);
+  mu_assert(test_array->max == 10, "Array not size as expected.");
+  mu_assert(test_array->end == 0, "Array not size as expected.");
+
+  int i;
+  for (i = 0; i < 5; i++) {
+    int *val = DArray_new(test_array);
+    *val = i * 2;
+    DArray_push(test_array, val);
+  }
+  mu_assert(test_array->max == 10, "Array not size as expected.");
+  mu_assert(test_array->end == 5, "Array not size as expected.");
+
+  mu_assert(*(int *)DArray_get(test_array, 4) == 8,
+            "Last value not as expected.");
+
+  int *frontval = DArray_new(test_array);
+  *frontval = 23;
+  DArray_insert_begin(test_array, frontval);
+
+  mu_assert(*(int *)DArray_get(test_array, 0) == 23,
+            "New first value not as expected.");
+  mu_assert(*(int *)DArray_get(test_array, 4) == 6,
+            "Last value not as expected. (to be shifted)");
+
   return NULL;
 }
 
@@ -172,8 +203,12 @@ char *all_tests() {
   mu_run_test(test_remove);
   mu_run_test(test_expand_contract);
   mu_run_test(test_push_pop);
-  mu_run_test(test_clear);
   mu_run_test(test_destroy);
+
+  mu_run_test(test_clear);
+  mu_run_test(test_expanded_area_initialized);
+
+  mu_run_test(test_insert_begin);
 
   return NULL;
 }
