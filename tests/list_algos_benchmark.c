@@ -32,7 +32,6 @@ typedef List *(algo_func)(List *list);
  * */
 double execute_measure(algo_func func, List *list) {
   time_t start, end;
-  double diff;
 
   start = clock();
   func(list);
@@ -65,7 +64,7 @@ List *random_get2(List *list) {
   return newlist;
 }
 
-int main(int argc, char *argv[]) {
+int main() {
   printf("list_algos_benchmark started\n");
   // printf("CLOCKS_PER_SEC: %d\n", CLOCKS_PER_SEC);
 
