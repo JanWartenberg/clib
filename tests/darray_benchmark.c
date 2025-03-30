@@ -1,26 +1,22 @@
 /*
  * Benchmark, but for the DArray vs Linked List
  *
- * A) compare getting a random value from both Data Structures
+ * A) compare getting a value from both Data Structures from random location
+ *      e.g. random get    container.get(location)
  * B) compare unshifting a value at front
+ *      e.g. unshift    (insert at front of container)
+ * C) compare appending a value at the end
+ *      e.g. append     (insert at end of container)
  *
  * Note:
  * I copied a bit to separate methods for DArray / List
  *  -> it could be solved via void pointers, but this seemed to be clearer
  *  and the copied logic is just a few lines of code
- * */
-
-/*
- * TODO
- *  decide WHAT to test
- *  -goal: compare linked list to DArray
- *      several comparisons needed
- *      e.g. random get    container.get(location)
- *      e.g. unshift    (insert at front of container)
- *      e.g. walk through all items
  *
- *  (later: give task to Claude and see what it spits out)
+ *
+ *  (Also gave task to Claude and see what it spits out. -> terrifyingly good)
  * */
+#include <limits.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -33,7 +29,6 @@
 #define LIST_ELEMENTS 20
 #define FACTOR 10
 #define NORM_RAND_MAX 100
-
 #define INITIAL_MAX 100
 
 typedef DArray *(algo_func)(DArray *list, int);
@@ -44,7 +39,6 @@ typedef List *(ll_func)(List *list, int);
  * */
 double execute_measure(algo_func func, DArray *list, int randomidx) {
   time_t start, end;
-  double diff;
 
   start = clock();
   func(list, randomidx);
@@ -58,7 +52,6 @@ double execute_measure(algo_func func, DArray *list, int randomidx) {
  * */
 double execute_measure_ll(ll_func func, List *list, int randomidx) {
   time_t start, end;
-  double diff;
 
   start = clock();
   func(list, randomidx);
@@ -120,28 +113,38 @@ List *random_get2(List *list, int idx) {
 }
 
 DArray *unshift1(DArray *list, int idx) {
+  (void)idx;
+
   int *newval = (int *)calloc(1, sizeof(int));
-  *newval = idx;
+  *newval = rand_int(INT_MAX);
   DArray_insert_begin(list, newval);
   return list;
 }
 
 List *unshift2(List *list, int idx) {
+  (void)idx;
+
   int *newval = (int *)calloc(1, sizeof(int));
-  *newval = idx;
+  *newval = rand_int(INT_MAX);
   List_unshift(list, newval);
   return list;
 }
 
-DArray *walk1(DArray *list, int idx) {
-
+DArray *insert1(DArray *list, int idx) {
   (void)idx;
+
+  int *newval = (int *)calloc(1, sizeof(int));
+  *newval = rand_int(INT_MAX);
+  DArray_push(list, newval);
   return list;
 }
 
-List *walk2(List *list, int idx) {
-
+List *insert2(List *list, int idx) {
   (void)idx;
+
+  int *newval = (int *)calloc(1, sizeof(int));
+  *newval = rand_int(INT_MAX);
+  List_push(list, newval);
   return list;
 }
 
@@ -161,11 +164,11 @@ void execute_test_run(algo_func algo1, ll_func algo2, const char *msg1,
     double duration2 = 0.0;
 
     DArray *darray1 = DArray_deep_copy(origlist);
-    duration1 += execute_measure(random_get1, darray1, random_index);
+    duration1 += execute_measure(algo1, darray1, random_index);
     DArray_clear_destroy(darray1);
 
     List *llist2 = DArray_copy_to_list(origlist);
-    duration2 += execute_measure_ll(random_get2, llist2, random_index);
+    duration2 += execute_measure_ll(algo2, llist2, random_index);
     List_clear_destroy(llist2);
 
     printf("%s %f\n", msg1, duration1);
@@ -177,7 +180,7 @@ void execute_test_run(algo_func algo1, ll_func algo2, const char *msg1,
   }
 }
 
-int main(int argc, char *argv[]) {
+int main() {
   printf("darray vs list benchmark started\n");
 
   // A) random get
@@ -189,20 +192,10 @@ int main(int argc, char *argv[]) {
   execute_test_run(unshift1, unshift2,
                    "Duration insert at front of dynamic array:",
                    "Duration insert at front linked list:");
-  /*
 
-    for (i = 0; i < TEST_REPETITIONS; i++) {
-      DArray *list1 = DArray_deep_copy(origlist);
-      // call the algorithm under test
-      duration1 += execute_measure(walk1, list1);
-      DArray_clear_destroy(list1);
+  // C) compare appending
+  execute_test_run(insert1, insert2, "Duration insert at end of dynamic array:",
+                   "Duration insert at end of linked list:");
 
-      DArray *list2 = DArray_deep_copy(origlist);
-      // call the algorithm under test2
-      duration2 += execute_measure(walk2, list2);
-
-      DArray_clear_destroy(list2);
-    }
-  */
   return 0;
 }
