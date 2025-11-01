@@ -193,6 +193,26 @@ char *test_insert_begin() {
   return NULL;
 }
 
+char *test_swap() {
+    DArray *arr = DArray_create(sizeof(char *), 5);
+    char *a = "first";
+    char *b = "second";
+
+    DArray_push(arr, a);
+    DArray_push(arr, b);
+
+    mu_assert(DArray_get(arr, 0) == a, "Initial first wrong");
+    mu_assert(DArray_get(arr, 1) == b, "Initial second wrong");
+
+    DArray_swap(arr, 0, 1);
+
+    mu_assert(DArray_get(arr, 0) == b, "Swap failed: first not swapped");
+    mu_assert(DArray_get(arr, 1) == a, "Swap failed: second not swapped");
+
+    DArray_destroy(arr);
+    return NULL;
+}
+
 char *all_tests() {
   mu_suite_start();
 
@@ -209,6 +229,8 @@ char *all_tests() {
   mu_run_test(test_expanded_area_initialized);
 
   mu_run_test(test_insert_begin);
+
+  mu_run_test(test_swap);
 
   return NULL;
 }

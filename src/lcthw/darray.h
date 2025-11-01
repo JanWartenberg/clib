@@ -20,6 +20,7 @@ int DArray_expand(DArray * array);
 int DArray_contract(DArray * array);
 int DArray_push(DArray * array, void *el);
 void *DArray_pop(DArray * array);
+void DArray_swap(DArray * array, int idx_a, int idx_b);
 void DArray_clear_destroy(DArray * array);
 int DArray_insert_begin(DArray *array, void *el);
 

@@ -130,3 +130,9 @@ void *DArray_pop(DArray *array) {
 error:
   return NULL;
 }
+
+void DArray_swap(DArray *array, int idx_a, int idx_b) {
+    void *tmp = array->contents[idx_a];
+    array->contents[idx_a] = array->contents[idx_b];
+    array->contents[idx_b] = tmp;
+}
