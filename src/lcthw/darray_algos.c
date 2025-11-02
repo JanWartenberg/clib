@@ -7,28 +7,15 @@ int DArray_qsort(DArray *array, DArray_compare cmp) {
   return 0;
 }
 
-/****
+/********
  * Heap sort incl. helper functions
- *
- * */
-// Helper ONLY for Strings
-void DArray_debug_print_strings(DArray *array) {
-  printf("DArray (end=%d, max=%d):\n", array->end, array->max);
-  for (int i = 0; i < array->end; i++) {
-    char *str = array->contents[i]; // hier: kein Cast nötig, void* → char*
-    printf("  [%d] \"%s\"\n", i, str ? str : "(null)");
-  }
-}
-
+ **** */
 // static inline helper
 // have typecheckin as advantage over macros
 static inline int left(int i) { return 2 * i + 1; }
 static inline int right(int i) { return 2 * i + 2; }
 static inline int parent(int i) { return (i - 1) / 2; }
 
-int cmp_strings(const void *a, const void *b) {
-    return strcmp((const char *)a, (const char *)b);
-}
 
 void heapify_down(DArray *array, int root_idx, int end_idx,
                   DArray_compare cmp) {
@@ -78,15 +65,9 @@ void heapify(DArray *array, DArray_compare cmp) {
   }
 }
 
+// reimplemented, since my stdlib does not offer this
 int DArray_heapsort(DArray *array, DArray_compare cmp) {
-  // we dont have this
-  // return heapsort(array->contents, DArray_count(array), sizeof(void *), cmp);
-
-  DArray_debug_print_strings(array);
-
   heapify(array, cmp);
-
-  DArray_debug_print_strings(array);
 
   int end = array->end;
   while (end > 1) {
@@ -95,7 +76,6 @@ int DArray_heapsort(DArray *array, DArray_compare cmp) {
     heapify_down(array, 0, end, cmp);
   }
 
-  DArray_debug_print_strings(array);
   return 0;
 }
 
