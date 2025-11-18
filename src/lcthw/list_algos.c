@@ -1,7 +1,6 @@
 #include "list_algos.h"
 #include "dbg.h"
 #include "list.h"
-#include <stdio.h>
 
 int compare_int(const void* a, const void *b)
 {
@@ -37,10 +36,11 @@ error:
 }
 
 List* List_merge_sort(List * list, List_compare cmp) {
+    List *result = NULL;
     check(list != NULL, "List to be sorted must exist");
 
     // init  (copy to result array)
-    List *result = List_create();
+    result = List_create();
 
     // recursive base case
     if (list->count <= 1) {

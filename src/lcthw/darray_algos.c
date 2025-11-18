@@ -14,7 +14,8 @@ int DArray_qsort(DArray *array, DArray_compare cmp) {
 // static inline helper
 // have typecheckin as advantage over macros
 static inline int left(int i) { return 2 * i + 1; }
-static inline int right(int i) { return 2 * i + 2; }
+// this is not needed for the algo, we'll keep it for completeness sake
+// static inline int right(int i) { return 2 * i + 2; }
 static inline int parent(int i) { return (i - 1) / 2; }
 
 void heapify_down(DArray *array, int root_idx, int end_idx,
