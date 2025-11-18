@@ -4,7 +4,6 @@
 
 /*
  * TODO
-    bfindreplace: Find one bstring in another, then replace it with a third.
     bsplit: Split a bstring into a bstrList.
     bformat: Do a format string, which is super handy.
     blength: Get the length of a bstring.
@@ -22,6 +21,7 @@
     bconcat: Concatenate one bstring onto another.
     biseq: Tests if two bstrings are equal.
     binstr: Tells if one bstring is in another.
+    bfindreplace: Find one bstring in another, then replace it with a third.
  * */
 
 bstring myStr = NULL;
@@ -200,22 +200,63 @@ char *test_binstr() {
   bstring mylocalStr5 = bfromcstr("somelongstringcontainingfoobaratposition24");
 
   mu_assert(binstr(mylocalStr2, 0, mylocalStr1) == 0, "foo not in foobar?");
-  mu_assert(binstr(mylocalStr3, 0, mylocalStr1) == BSTR_ERR, "foo found in doof?");
+  mu_assert(binstr(mylocalStr3, 0, mylocalStr1) == BSTR_ERR,
+            "foo found in doof?");
   mu_assert(binstr(mylocalStr3, 0, mylocalStr4) == 1, "oof not in doof?");
 
-  mu_assert(binstr(NULL, 0, mylocalStr1) == BSTR_ERR, "NULL in binstr not an ERR");
-  mu_assert(binstr(mylocalStr2, 0, NULL) == BSTR_ERR, "NULL in binstr not an ERR");
-  mu_assert(binstr(mylocalStr2, 5, mylocalStr1) == BSTR_ERR, "wrong position given, but not ERR returned");
+  mu_assert(binstr(NULL, 0, mylocalStr1) == BSTR_ERR,
+            "NULL in binstr not an ERR");
+  mu_assert(binstr(mylocalStr2, 0, NULL) == BSTR_ERR,
+            "NULL in binstr not an ERR");
+  mu_assert(binstr(mylocalStr2, 5, mylocalStr1) == BSTR_ERR,
+            "wrong position given, but not ERR returned");
 
   // NOTE: pos starts 0-indexed
   // NOTE: return value is based of original string, regardless of given pos
-  mu_assert(binstr(mylocalStr5, 19, mylocalStr1) == 24, "Long string search wrong.");
-  mu_assert(binstr(mylocalStr5, 24, mylocalStr1) == 24, "Long string search wrong.");
+  mu_assert(binstr(mylocalStr5, 19, mylocalStr1) == 24,
+            "Long string search wrong.");
+  mu_assert(binstr(mylocalStr5, 24, mylocalStr1) == 24,
+            "Long string search wrong.");
 
   bdestroy(mylocalStr1);
   bdestroy(mylocalStr2);
   bdestroy(mylocalStr3);
   bdestroy(mylocalStr4);
+  return NULL;
+}
+
+char *test_bfindreplace() {
+  // replace one
+  bstring b = bfromcstr("foobar");
+  bstring find = bfromcstr("bar");
+  bstring repl = bfromcstr("bubble");
+  int rc;
+
+  rc = bfindreplace(b, find, repl, 0);
+  mu_assert(rc == BSTR_OK, "error occurred during replace");
+  mu_assert(strcmp(bdata(b), "foobubble") == 0,
+            "bstring has unexpected content");
+
+  // replace many
+  b = bfromcstr("foobar is like a bar with no gin tonic");
+
+  rc = bfindreplace(b, find, repl, 0);
+  mu_assert(rc == BSTR_OK, "error occurred during replace");
+  mu_assert(strcmp(bdata(b), "foobubble is like a bubble with no gin tonic") == 0,
+            "bstring has unexpected content");
+
+  // vary pos
+  bassign(find, repl);
+  repl = bfromcstr("twitch chat");
+  rc = bfindreplace(b, find, repl, 6);
+  mu_assert(rc == BSTR_OK, "error occurred during replace");
+  printf("%s", bdata(b));
+  mu_assert(strcmp(bdata(b), "foobubble is like a twitch chat with no gin tonic") == 0,
+            "bstring has unexpected content");
+
+  bdestroy(b);
+  bdestroy(find);
+  bdestroy(repl);
   return NULL;
 }
 
@@ -244,6 +285,7 @@ char *all_tests() {
   mu_run_test(test_bstricmp);
   mu_run_test(test_biseq);
   mu_run_test(test_binstr);
+  mu_run_test(test_bfindreplace);
 
   mu_run_test(test_destroy);
 
