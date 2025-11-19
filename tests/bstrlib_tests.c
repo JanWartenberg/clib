@@ -1,15 +1,7 @@
-
 #include "../src/lcthw/bstrlib.h"
 #include "minunit.h"
 
 /*
- * TODO
-    bsplit: Split a bstring into a bstrList.
-    bformat: Do a format string, which is super handy.
-    blength: Get the length of a bstring.
-    bdata: Get the data from a bstring.
-    bchar: Get a char from a bstring.
-
     DONE
     bassignblk: Set a bstring to a C string but give the length.
     bfromcstr: Create a bstring from a C style constant.
@@ -22,6 +14,13 @@
     biseq: Tests if two bstrings are equal.
     binstr: Tells if one bstring is in another.
     bfindreplace: Find one bstring in another, then replace it with a third.
+    bsplit: Split a bstring into a bstrList.
+    bformat: Do a format string, which is super handy.
+    bchar: Get a char from a bstring.
+
+    Implicitly tested:
+    blength: Get the length of a bstring.
+    bdata: Get the data from a bstring.
  * */
 
 bstring myStr = NULL;
@@ -222,6 +221,7 @@ char *test_binstr() {
   bdestroy(mylocalStr2);
   bdestroy(mylocalStr3);
   bdestroy(mylocalStr4);
+  bdestroy(mylocalStr5);
   return NULL;
 }
 
@@ -238,25 +238,109 @@ char *test_bfindreplace() {
             "bstring has unexpected content");
 
   // replace many
-  b = bfromcstr("foobar is like a bar with no gin tonic");
+  bassigncstr(b, "foobar is like a bar with no gin tonic");
 
   rc = bfindreplace(b, find, repl, 0);
   mu_assert(rc == BSTR_OK, "error occurred during replace");
-  mu_assert(strcmp(bdata(b), "foobubble is like a bubble with no gin tonic") == 0,
+  mu_assert(strcmp(bdata(b), "foobubble is like a bubble with no gin tonic") ==
+                0,
             "bstring has unexpected content");
 
   // vary pos
   bassign(find, repl);
-  repl = bfromcstr("twitch chat");
+  bassigncstr(repl, "twitch chat");
   rc = bfindreplace(b, find, repl, 6);
   mu_assert(rc == BSTR_OK, "error occurred during replace");
-  printf("%s", bdata(b));
-  mu_assert(strcmp(bdata(b), "foobubble is like a twitch chat with no gin tonic") == 0,
+  mu_assert(strcmp(bdata(b),
+                   "foobubble is like a twitch chat with no gin tonic") == 0,
             "bstring has unexpected content");
 
   bdestroy(b);
   bdestroy(find);
   bdestroy(repl);
+  return NULL;
+}
+
+char *test_bsplit() {
+
+  // unsplittable
+  bstring input = bfromcstr("atom");
+  struct bstrList *myList = bsplit(input, '.');
+
+  mu_assert(myList->qty == 1, "should not split");
+  mu_assert(bstrcmp(myList->entry[0], input) == 0, "content changed");
+  bstrListDestroy(myList);
+
+  // "normal"
+  bassigncstr(input, "This. Is. Sparta. Foo.");
+  bstring comp1 = bfromcstr("This");
+  bstring comp2 = bfromcstr("");
+
+  myList = bsplit(input, '.');
+
+  mu_assert(myList != NULL, "Return of bsplit not a correct struct.");
+  mu_assert(myList->qty == 5, "Length of bsplit output wrong.");
+  mu_assert(bstricmp(myList->entry[0], comp1) == 0, "First result not 'This'.");
+  // Last element is empty string
+  mu_assert(bstricmp(myList->entry[myList->qty - 1], comp2) == 0,
+            "Last result non-empty.");
+  // we dont assert mlen - implementation detail
+  bstrListDestroy(myList);
+
+  // swiss cheese
+  bassigncstr(input, "...");
+
+  myList = bsplit(input, '.');
+
+  mu_assert(myList->qty == 4, "Should have 4 empty strings.");
+  bstrListDestroy(myList);
+
+  // NULL -> NULL
+  myList = bsplit(NULL, '.');
+  mu_assert(myList == NULL, "bsplit should fail for NULL.");
+
+  bdestroy(input);
+  bdestroy(comp1);
+  bdestroy(comp2);
+  bstrListDestroy(myList);
+
+  return NULL;
+}
+
+char *test_bformat() {
+  int num = 20;
+  char *name = "Jan";
+  char plural = 's';
+  bstring result;
+
+  result = bformat("%s has %d monkey%c\n", name, num, plural);
+
+  mu_assert(result != NULL, "it should not return NULL");
+  mu_assert(strcmp(bdata(result), "Jan has 20 monkeys\n") == 0,
+            "Content wrong");
+
+  bstring stringception;
+
+  stringception =
+      bformat("We put the bstring <%s> into this one.", bdata(result));
+  mu_assert(stringception != NULL, "it should not return NULL");
+  mu_assert(blength(stringception) == 55, "wrong length of new bstring");
+
+  bdestroy(result);
+  bdestroy(stringception);
+  return NULL;
+}
+
+char *test_bchar() {
+  bstring b = bfromcstr("fool");
+
+  mu_assert(bchar(b, 0) == 'f', "Index 0 wrong");
+  mu_assert(bchar(b, 3) == 'l', "Index 3 wrong");
+
+  mu_assert(bchar(b, 5) == '\0', "Wrong return for outside bounds.");
+  mu_assert(bchar(b, -1) == '\0', "Wrong return for outside bounds.");
+
+  bdestroy(b);
   return NULL;
 }
 
@@ -286,6 +370,9 @@ char *all_tests() {
   mu_run_test(test_biseq);
   mu_run_test(test_binstr);
   mu_run_test(test_bfindreplace);
+  mu_run_test(test_bsplit);
+  mu_run_test(test_bformat);
+  mu_run_test(test_bchar);
 
   mu_run_test(test_destroy);
 
