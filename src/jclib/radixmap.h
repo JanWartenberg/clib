@@ -1,4 +1,5 @@
-#ifndef _radixmap_h
+#ifndef JCLIB_RADIXMAP_H
+#define JCLIB_RADIXMAP_H
 #include <stdint.h>
 #include <stdlib.h>
 

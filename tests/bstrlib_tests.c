@@ -1,4 +1,4 @@
-#include "../src/lcthw/bstrlib.h"
+#include "../src/jclib/bstrlib.h"
 #include "minunit.h"
 
 /*

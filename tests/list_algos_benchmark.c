@@ -10,8 +10,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "../src/lcthw/list.h"
-#include "../src/lcthw/list_algos.h"
+#include "../src/jclib/list.h"
+#include "../src/jclib/list_algos.h"
 
 #define TEST_REPETITIONS 100
 #define LIST_ELEMENTS 1000

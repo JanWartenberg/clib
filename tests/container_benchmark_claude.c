@@ -3,7 +3,7 @@
  * At least execution results look highly plausible
  *
  * To compile:
- *  gcc -o container_benchmark container_benchmark_claude.c ../src/lcthw/list.c ../src/lcthw/darray.c -Wall
+ *  gcc -o container_benchmark container_benchmark_claude.c ../src/jclib/list.c ../src/jclib/darray.c -Wall
  *
  * Note: the CLOCK_MONOTONIC lets the LSP whine, but it compiles in Ubuntu Docker.
  *
@@ -12,8 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "../src/lcthw/list.h"
-#include "../src/lcthw/darray.h"
+#include "../src/jclib/list.h"
+#include "../src/jclib/darray.h"
 
 // Define the number of operations for each test
 #define NUM_ELEMENTS 100000

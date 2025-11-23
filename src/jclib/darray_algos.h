@@ -1,5 +1,5 @@
-#ifndef darray_algos_h
-#define darray_algos_h
+#ifndef JCLIB_DARRAY_ALGOS_H
+#define JCLIB_DARRAY_ALGOS_H
 
 #include "darray.h"
 

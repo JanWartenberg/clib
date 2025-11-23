@@ -1,4 +1,4 @@
-#include "../src/lcthw/darray.h"
+#include "../src/jclib/darray.h"
 #include "minunit.h"
 
 static DArray *array = NULL;

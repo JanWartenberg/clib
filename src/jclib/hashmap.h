@@ -1,0 +1,1 @@
+#ifndef JCLIB_HASHMAP_H

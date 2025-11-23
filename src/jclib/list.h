@@ -1,5 +1,5 @@
-#ifndef lcthw_List_h
-#define lcthw_List_h
+#ifndef JCLIB_LIST_H
+#define JCLIB_LIST_H
 
 #include <stdlib.h>
 

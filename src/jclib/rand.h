@@ -1,5 +1,5 @@
-#ifndef lcthw_rand_h
-#define lcthw_rand_h
+#ifndef JCLIB_RAND_H
+#define JCLIB_RAND_H
 
 int rand_int(int);
 int rand_int_minmax(int, int);

@@ -1,5 +1,5 @@
-#ifndef __dbg_h__
-#define __dbg_h__
+#ifndef JCLIB_DBG_H
+#define JCLIB_DBG_H
 
 #include <stdio.h>
 #include <errno.h>

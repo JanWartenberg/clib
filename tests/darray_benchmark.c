@@ -20,9 +20,9 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "../src/lcthw/darray.h"
-#include "../src/lcthw/list.h"
-#include "../src/lcthw/rand.h"
+#include "../src/jclib/darray.h"
+#include "../src/jclib/list.h"
+#include "../src/jclib/rand.h"
 #include "minunit.h"
 
 #define TEST_REPETITIONS 7

@@ -3,7 +3,7 @@
  * but needed some fixes and simplification.
  * Probably I need to reimplement it from scratch for sake of learning.
  * */
-#include "../src/lcthw/list.h" // Include your linked list implementation
+#include "../src/jclib/list.h" // Include your linked list implementation
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>

@@ -1,5 +1,5 @@
-#ifndef lcthw_List_algos_h
-#define lcthw_List_algos_h
+#ifndef JCLIB_LIST_ALGOS_H
+#define JCLIB_LIST_ALGOS_H
 
 #include "list.h"
 

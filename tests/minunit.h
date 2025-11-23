@@ -1,10 +1,10 @@
 #undef NDEBUG
-#ifndef _minunit_h
-#define _minunit_h
+#ifndef MINUNIT_H
+#define MINUNIT_H
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../src/lcthw/dbg.h"
+#include "../src/jclib/dbg.h"
 
 #define mu_suite_start() char *message = NULL
 

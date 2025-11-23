@@ -1,5 +1,5 @@
-#ifndef _DArray_h
-#define _DArray_h
+#ifndef JCLIB_DARRAY_H
+#define JCLIB_DARRAY_H
 #include "dbg.h"
 #include <assert.h>
 #include <stdlib.h>

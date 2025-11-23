@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <string.h>
 #include "minunit.h"
-#include "../src/lcthw/list.h"
-#include "../src/lcthw/list_algos.h"
+#include "../src/jclib/list.h"
+#include "../src/jclib/list_algos.h"
 
 //char *values[] = { "XXXX", "1234", "abcd", "xjvef", "NDSS" };
 char *values[] = { "eeee", "cccc", "abcd", "xjvef", "bbbb" };

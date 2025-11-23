@@ -1,5 +1,5 @@
-#ifndef lcthw_wait_h
-#define lcthw_wait_h
+#ifndef JCLIB_WAIT_H
+#define JCLIB_WAIT_H
 
 void wait(int seconds);
 void wait_ms(int milliseconds);

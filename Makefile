@@ -59,8 +59,8 @@ benchmark: list_algos_benchmark_tests darray_benchmark_tests
 	./tests/darray_benchmark
 
 # Compile rule for the benchmark
-list_algos_benchmark_tests: tests/list_algos_benchmark.c src/lcthw/list.c src/lcthw/wait.c src/lcthw/list_algos.c
-	$(CC) $(CFLAGS) -o tests/list_algos_benchmark tests/list_algos_benchmark.c src/lcthw/list.c src/lcthw/wait.c src/lcthw/list_algos.c $(LIBS)
+list_algos_benchmark_tests: tests/list_algos_benchmark.c src/jclib/list.c src/jclib/wait.c src/jclib/list_algos.c
+	$(CC) $(CFLAGS) -o tests/list_algos_benchmark tests/list_algos_benchmark.c src/jclib/list.c src/jclib/wait.c src/jclib/list_algos.c $(LIBS)
 
-darray_benchmark_tests: tests/darray_benchmark.c src/lcthw/darray.c src/lcthw/rand.c src/lcthw/list.c 
-	$(CC) $(CFLAGS) -o tests/darray_benchmark tests/darray_benchmark.c src/lcthw/darray.c src/lcthw/rand.c src/lcthw/list.c $(LIBS)
+darray_benchmark_tests: tests/darray_benchmark.c src/jclib/darray.c src/jclib/rand.c src/jclib/list.c 
+	$(CC) $(CFLAGS) -o tests/darray_benchmark tests/darray_benchmark.c src/jclib/darray.c src/jclib/rand.c src/jclib/list.c $(LIBS)

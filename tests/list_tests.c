@@ -1,9 +1,9 @@
 #include "minunit.h"
-#include "../src/lcthw/list.h"
+#include "../src/jclib/list.h"
 #include <assert.h>
 
 typedef int (*lib_function) (const char *data);
-char *lib_file = "build/liblcthw.so";
+char *lib_file = "build/libjclib.so";
 void *lib = NULL;
 
 static List *list = NULL;

@@ -1,4 +1,4 @@
-#include "../src/lcthw/darray_algos.h"
+#include "../src/jclib/darray_algos.h"
 #include "minunit.h"
 
 int testcmp(char **a, char **b) { return strcmp(*a, *b); }
