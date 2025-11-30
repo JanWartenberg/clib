@@ -17,7 +17,7 @@ static uint32_t default_hash(void *a) {
     return 0;
 
   struct tagbstring *bs = (struct tagbstring *)a;
-  check(bs->mlen > 0,  "Invalid bstring passed to default_hash.");
+  check(bs->mlen > 0, "Invalid bstring passed to default_hash.");
   check(bs->data != NULL, "Invalid bstring passed to default_hash.");
 
   size_t len = blength((bstring)a);
@@ -52,6 +52,9 @@ Hashmap *Hashmap_create(Hashmap_compare compare, Hashmap_hash hash) {
   map->buckets = DArray_create(sizeof(DArray *), DEFAULT_NUMBER_OF_BUCKETS);
   map->buckets->end = map->buckets->max; // fake out expanding it
   check_mem(map->buckets);
+  map->bucket_count = DEFAULT_NUMBER_OF_BUCKETS;
+  map->count = 0;
+  map->load_limit = 0.75f;
 
   return map;
 
@@ -106,7 +109,7 @@ static inline DArray *Hashmap_find_bucket(Hashmap *map, void *key, int create,
   check(map->hash != NULL, "Invalid hash function provided");
 
   uint32_t hash = map->hash(key);
-  int bucket_n = hash % DEFAULT_NUMBER_OF_BUCKETS;
+  int bucket_n = hash % map->bucket_count;
   check(bucket_n >= 0, "Invalid bucket found: %d", bucket_n);
   // store it for the return so that the caller can use it
   *hash_out = hash;
@@ -118,7 +121,7 @@ static inline DArray *Hashmap_find_bucket(Hashmap *map, void *key, int create,
 
   if (!bucket && create) {
     // new bucket set it up
-    bucket = DArray_create(sizeof(void *), DEFAULT_NUMBER_OF_BUCKETS);
+    bucket = DArray_create(sizeof(void *), INITIAL_BUCKET_SIZE);
     check_mem(bucket);
     DArray_set(map->buckets, bucket_n, bucket);
   }
@@ -134,13 +137,53 @@ static inline int Hashmap_get_node(Hashmap *map, uint32_t hash, DArray *bucket,
   int i = 0;
 
   for (i = 0; i < DArray_end(bucket); i++) {
-    debug("TRY: %d", i);
+    // debug("TRY: %d", i);
     HashmapNode *node = DArray_get(bucket, i);
     if (node->hash == hash && map->compare(node->key, key) == 0) {
       return i;
     }
   }
 
+  return -1;
+}
+
+int Hashmap_resize(Hashmap *map, size_t new_size) {
+  DArray *new_buckets = DArray_create(sizeof(DArray *), new_size);
+  check_mem(new_buckets);
+  new_buckets->end = new_buckets->max;
+
+  // iterate over old buckets, over old HashmapNodes
+  // carry them over into new buckets
+  for (size_t i = 0; i < map->bucket_count; i++) {
+    DArray *bucket = DArray_get(map->buckets, i);
+    if (!bucket)
+      continue;
+
+    for (size_t j = 0; j < DArray_count(bucket); j++) {
+      HashmapNode *node = DArray_get(bucket, j);
+      uint32_t new_index = node->hash % new_size;
+
+      // debug("Rehashing node: %p key=%p hash=%u", node, node->key, node->hash);
+
+      DArray *new_bucket = DArray_get(new_buckets, new_index);
+      if (!new_bucket) {
+        new_bucket = DArray_create(sizeof(void *), INITIAL_BUCKET_SIZE);
+        DArray_set(new_buckets, new_index, new_bucket);
+      }
+      DArray_push(new_bucket, node);
+    }
+    // debug("Destroying old bucket %zu, count=%d", i, DArray_count(bucket));
+    // we do not destroy the old buckets -- otherwise we'd loose the handle
+  }
+
+  // old bucket collection
+  DArray_destroy(map->buckets);
+  // take over
+  map->buckets = new_buckets;
+  map->bucket_count = new_size;
+
+  return 0;
+error:
   return -1;
 }
 
@@ -164,6 +207,12 @@ int Hashmap_set(Hashmap *map, void *key, void *data) {
   check_mem(node);
 
   DArray_push(bucket, node);
+  map->count++;
+
+  // resize trigger
+  if ((float)map->count / map->bucket_count > map->load_limit) {
+    Hashmap_resize(map, map->bucket_count * 2);
+  }
 
   return 0;
 error:

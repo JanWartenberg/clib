@@ -132,6 +132,42 @@ char *test_delete() {
   return NULL;
 }
 
+Hashmap *resizable = NULL;
+struct tagbstring key_tpl = bsStatic("key_");
+struct tagbstring val_tpl = bsStatic("val_");
+char *test_resize() {
+  resizable = Hashmap_create(NULL, NULL);
+  mu_assert(resizable != NULL, "Failed to create map.");
+
+  size_t start_buckets = resizable->bucket_count;
+  size_t initial_count = resizable->count;
+
+  //  Insert enough entries to trigger resize (~load limit * bucket_count)
+  for (int i = 0; i < (int)(start_buckets * resizable->load_limit * 2); i++) {
+    // build key "key_0", "key_1", ...
+    bstring key = bformat("%s%d", bdata(&key_tpl), i);
+    bstring val = bformat("%s%d", bdata(&val_tpl), i);
+    int rc = Hashmap_set(resizable, bstrcpy(key),
+                         bstrcpy(val)); // <- copy into the hashmap
+    bdestroy(key);
+    bdestroy(val);
+    mu_assert(rc == 0, "Failed to insert entry.");
+  }
+
+  mu_assert(resizable->bucket_count > start_buckets,
+            "Resize did not increase bucket count.");
+  mu_assert(resizable->count > initial_count, "Count not incremented.");
+
+  // Sanity: validate Random key
+  bstring probe = bformat("%s%d", bdata(&key_tpl), 10);
+  bstring result = Hashmap_get(resizable, probe);
+  mu_assert(result != NULL, "Lookup failed after resize.");
+  bdestroy(probe);
+
+  Hashmap_destroy(resizable);
+  return NULL;
+}
+
 char *test_destroy() {
   Hashmap_destroy(map);
 
@@ -157,6 +193,7 @@ char *all_tests() {
   mu_run_test(test_get_set);
   mu_run_test(test_traverse);
   mu_run_test(test_delete);
+  mu_run_test(test_resize);
   mu_run_test(test_destroy);
 
   mu_run_test(test_empty);
