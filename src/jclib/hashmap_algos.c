@@ -48,3 +48,18 @@ uint32_t Hashmap_djb_hash(void *data)
 
     return hash;
 }
+
+// 4th hash function: intentionally poor distribution (bad but plausible looking)
+uint32_t Hashmap_bad4_hash(void *data)
+{
+    bstring s = (bstring) data;
+    // Simple poor hashing: depend almost entirely on the first character
+    uint32_t hash = 0;
+    if (blength(s) > 0) {
+        hash = (uint32_t) bchare(s, 0, 0);
+    }
+    // Scatter a little, but still biased
+    hash *= 2654435761u; // Knuth's multiplicative constant
+    if (hash == 0) hash = 1;
+    return hash;
+}
