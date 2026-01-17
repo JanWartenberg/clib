@@ -159,7 +159,7 @@ int Hashmap_resize(Hashmap *map, size_t new_size) {
     if (!bucket)
       continue;
 
-    for (size_t j = 0; j < DArray_count(bucket); j++) {
+    for (int j = 0; j < DArray_count(bucket); j++) {
       HashmapNode *node = DArray_get(bucket, j);
       uint32_t new_index = node->hash % new_size;
 

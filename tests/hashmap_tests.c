@@ -179,7 +179,7 @@ char *test_empty() {
   map_empty = Hashmap_create(NULL, NULL);
   mu_assert(map_empty != NULL, "Failed to create map_empty.");
 
-  bstring deleted = (bstring)Hashmap_delete(map_empty, &test5);
+  Hashmap_delete(map_empty, &test5);
 
   bstring result = Hashmap_get(map_empty, &test1);
   mu_assert(result == NULL, "Wrong value for get from empty.");
